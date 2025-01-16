@@ -1,17 +1,21 @@
+from fastapi import HTTPException
+from infrastructure.database import users_db
+
 class AuthService:
-    @staticmethod
-    def login(username: str, password: str) -> str:
-        # Упрощённая авторизация
-        if username == "admin" and password == "admin":
-            return "admin_token"
-        elif username == "user" and password == "user":
-            return "user_token"
-        raise ValueError("Неверные учётные данные")
+    db = {
+    "orders": []
+    }
+
+    users_db = {
+    "admin": {"password": "admin123", "role": "admin"},
+    "user": {"password": "user123", "role": "user"},
+    }
 
     @staticmethod
-    def verify_token(token: str) -> str:
-        if token == "admin_token":
-            return "Admin"
-        elif token == "user_token":
-            return "User"
-        raise PermissionError("Неверный токен")
+    def verify_user(username: str, password: str):
+        user = AuthService.users_db.get(username)
+        if user and user["password"] == password:
+            return {"username": username, "role": user["role"]}
+        return None
+
+    

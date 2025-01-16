@@ -1,13 +1,14 @@
-from prometheus_client import Counter
+python
+import time
+from prometheus_client import Counter, Histogram
 
-request_count = Counter("api_requests_total", "Total API requests", ["method", "endpoint", "status"])
+REQUEST_COUNT = Counter("request_count", "Total request count", ["endpoint", "method", "status"])
+REQUEST_LATENCY = Histogram("request_latency_seconds", "Request latency in seconds", ["endpoint"])
 
-@app.middleware("http")
-async def track_requests(request, call_next):
-    response = await call_next(request)
-    request_count.labels(
-        method=request.method,
-        endpoint=request.url.path,
-        status=response.status_code,
-    ).inc()
-    return response
+def log_metrics(request, response):
+    status = response.status_code
+    endpoint = request.url.path
+    method = request.method
+
+    REQUEST_COUNT.labels(endpoint=endpoint, method=method, status=status).inc()
+    duration = time.time() - request.state.start_time

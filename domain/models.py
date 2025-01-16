@@ -1,25 +1,18 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
-from sqlalchemy.orm import relationship
-from infrastructure.database import Base
+from typing import List,Optional
+from pydantic import BaseModel
 
-# Таблица Product
-class Product(Base):
-    __tablename__ = "products"
+class Product(BaseModel):
+    name: str
+    price: float
+    quantity: int
 
-    product_id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    price = Column(Float, nullable=False)
-    quantity = Column(Integer, nullable=False)
-    order_id = Column(Integer, ForeignKey("orders.order_id"))
+class Order(BaseModel):
+    id: Optional[int] = None
+    customer_name: str
+    status: str
+    total_price: float
+    products: List[Product]
 
-# Таблица Order
-class Order(Base):
-    __tablename__ = "orders"
-
-    order_id = Column(Integer, primary_key=True, index=True)
-    customer_name = Column(String, nullable=False)
-    status = Column(String, nullable=False)
-    total_price = Column(Float, nullable=False)
-
-    # Связь с продуктами
-    products = relationship("Product", backref="order", cascade="all, delete")
+class Metrics(BaseModel):
+    request_count: int
+    request_latency: float

@@ -43,7 +43,7 @@ class OrderService:
         return {"orders": orders, "message": "Orders retrieved successfully."}
 
     @staticmethod
-    def update_order(order_id: int, user: dict):
+    def update_order(order_id: int,updates:dict, user: dict):
         start_time = time.time()
         order = db["orders"]
         duration = time.time() - start_time

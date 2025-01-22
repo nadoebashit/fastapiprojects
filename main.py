@@ -25,3 +25,4 @@ async def metrics_middleware(request: Request, call_next):
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the Order Management System"}
+

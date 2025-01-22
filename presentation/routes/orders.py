@@ -34,6 +34,13 @@ def get_orders(
     filters = {"status": status, "min_price": min_price, "max_price": max_price}
     return OrderService.get_orders(filters, user)
 
+@router.get("/{order_id}")
+def get_order_by_id(
+    order_id: int,
+    user: dict = Depends(authenticate_user),  # Зависимость для аутентификации пользователя
+):
+    return OrderService.get_order_by_id(order_id, user)
+
 @router.put("/{order_id}")
 def update_order(
     order_id: int,

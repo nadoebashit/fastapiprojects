@@ -43,19 +43,27 @@ class OrderService:
         return {"orders": orders, "message": "Orders retrieved successfully."}
 
     @staticmethod
-    def update_order(order_id: int, updates: dict, user: dict):
+    def update_order(order_id: int, user: dict):
+        start_time = time.time()
+        order = db["orders"]
+        duration = time.time() - start_time
+        MetricsService.record_request(endpoint="/orders", method="POST", status=200)
+        MetricsService.record_latency(endpoint="/orders", duration=duration)
+        return order
+    
+    @staticmethod
+    def get_order_by_id(order_id: int, user: dict):
         start_time = time.time()
 
         for order in db["orders"]:
             if order["id"] == order_id:
-                order.update(updates)
-
                 duration = time.time() - start_time
-                MetricsService.record_request(endpoint=f"/orders/{order_id}", method="PUT", status=200)
+                MetricsService.record_request(endpoint=f"/orders/{order_id}", method="GET", status=200)
                 MetricsService.record_latency(endpoint=f"/orders/{order_id}", duration=duration)
 
-                return order, {"message": "Order updated successfully."}
-        MetricsService.record_request(endpoint=f"/orders/{order_id}", method="PUT", status=404)
+                return order, {"message": "Order retrieved successfully."}
+
+        MetricsService.record_request(endpoint=f"/orders/{order_id}", method="GET", status=404)
         return None, {"message": "Order not found."}
 
     @staticmethod
